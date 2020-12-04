@@ -2,8 +2,6 @@ import cv2
 import numpy as np
 import torch
 from torchvision.transforms import transforms
-
-import os
 from models.hrnet import HRNet
 
 class SimpleHRNet:
@@ -15,10 +13,12 @@ class SimpleHRNet:
     Multi-person support with the YOLOv3 detector is also included (and enabled by default).
     """
 
+    # checkpoint_path = r"weights\pose_hrnet_w48_384x288.pth",
+
     def __init__(self,
                  c,
                  nof_joints,
-                 checkpoint_path,
+                 checkpoint_path=r".\hrnet\weights\pose_hrnet_w48_384x288.pth",
                  model_name='HRNet',
                  resolution=(384, 288),
                  interpolation=cv2.INTER_CUBIC,

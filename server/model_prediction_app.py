@@ -1,13 +1,24 @@
-from starlette.applications import Starlette
+import os
+import sys
 import cv2
-from SimpleHRNet import SimpleHRNet
+import torch
+
+root_folder_path = os.path.split(os.getcwd())[0] # cd .. to root
+sys.path.append(os.path.join(root_folder_path, 'hrnet'))
+sys.path.append(root_folder_path)
+
+os.chdir(root_folder_path)
+
+from starlette.applications import Starlette
+from hrnet.SimpleHRNet import SimpleHRNet
+
 import base64
 import asyncio
 import websockets
 import numpy as np
 
 app = Starlette()
-model = SimpleHRNet(48, 17, "weights/pose_hrnet_w48_384x288.pth")
+model = SimpleHRNet(48, 17, device=torch.device("cuda"))
 
 async def image_pred(websocket, path):
     name = await websocket.recv()
@@ -16,7 +27,6 @@ async def image_pred(websocket, path):
     image = cv2.imdecode(image, flags=1)
     predictions = model.predict(image)
     await websocket.send("{}".format(predictions))
-
 
 if __name__ == "__main__":
     start_server = websockets.serve(image_pred, "localhost", 8009)
