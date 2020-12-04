@@ -1,0 +1,21 @@
+<!doctype html>
+
+
+<h1> Pose Estimation Demo (HRNet) </h1>
+<p> Upload your image with a human body and receive the image with keypoints </p>
+<form action="/upload" method = "post" enctype = "multipart/form-data">
+    <u> Select picture to upload: </u> <br> <p>
+    1. <input type="file" name="file"><br><p>
+    2. <input type="submit" value="Upload">
+</form>
+<br>
+<br>
+<u> Submit picture URL </u>
+<form action = "/classify-url" method="get">
+    1. <input type="url" name="url" size="60"><br><p> 
+                           
+</form>
+
+<form action="/stream" method="post">
+    <input type="submit" value="Go to Google" />
+</form>
