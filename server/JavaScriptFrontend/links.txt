@@ -1,0 +1,15 @@
+
+
+socket io documentation
+https://socket.io/docs/v3/client-api/index.html
+
+
+building-apps-using-flask-socketio-and-javascript-socket-io
+https://medium.com/@abhishekchaudhary_28536/building-apps-using-flask-socketio-and-javascript-socket-io-part-1-ae448768643
+
+Захват кадров с WebRTC
+https://developer.mozilla.org/ru/docs/Web/API/WebRTC_API/Taking_still_photos
+
+
+Why we need Flask-CORS?
+https://stackoverflow.com/questions/62019482/from-origin-null-has-been-blocked-by-cors-policy-no-access-control-allow-ori
