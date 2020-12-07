@@ -173,9 +173,6 @@ class SimpleHRNet:
 
             # images = torch.Tensor(image)
 
-
-            print("after", images.shape)
-
             boxes = np.asarray([[0, 0, old_res[1], old_res[0]]], dtype=np.float32)  # [x1, y1, x2, y2]
             heatmaps = np.zeros((1, self.nof_joints, self.resolution[0] // 4, self.resolution[1] // 4),
                                 dtype=np.float32)
@@ -184,10 +181,7 @@ class SimpleHRNet:
             images = images.to(self.device)
 
             with torch.no_grad():
-                print("len(images)", len(images))
-                print("self.max_batch_size", self.max_batch_size)
                 # if len(images) <= self.max_batch_size:
-                print("Before pred", images.shape)
 
                 out = self.model(images)
 

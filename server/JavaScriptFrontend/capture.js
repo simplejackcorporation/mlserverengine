@@ -9,13 +9,45 @@ var photo = null;
 var startbutton = null;
 var socket = null;
 
+
 function startup() {
+//  import { hello } from './module.js';
 
-  socket = io.connect('http://localhost:8009')
+//  socket = io.connect('http://localhost:8009')
+  var url = 'http://localhost:8009'
+  socket = io(url, {
+  transportOptions: {
+    polling: {
+      extraHeaders: {
+        'Access-Control-Allow-Origin': '*',
+//        'Origin': url
+      }
+    }
+  }
+});
 
-//  socket.on('after connect', function (socket) {
-//    console.log("after connection")
-//  })
+  socket.on('video received', function (socket) {
+    console.log("video received HERE")
+  })
+
+  socket.on('after connect', function (socket) {
+    console.log("VOVA HERE")
+    loopFunction(1000, sendPicture); // call every 1 sec
+
+  })
+
+   socket.on('model did predict', function (socket) {
+    console.log("prediction received")
+
+    dumped_xs = socket["dumped_xs"]
+    dumped_ys = socket["dumped_ys"]
+    dumped_confs = socket["dumped_confs"]
+    drawPoints(dumped_xs, dumped_ys, dumped_confs)
+  })
+
+  socket.on('Video received', function (socket) {
+    console.log('VIDEO received')
+  })
 
   video = document.getElementById('video');
   canvas = document.getElementById('canvas');
@@ -47,9 +79,6 @@ function startup() {
       canvas.setAttribute('width', width);
       canvas.setAttribute('height', height);
       streaming = true;
-
-
-      loopFunction(1000, sendPicture); // call every 1 sec
     }
   }, false);
 }
@@ -64,26 +93,54 @@ function loopFunction(delay, callback){
 
 
 function sendPicture() {
-//    console.log("sendPicture")
+  var context = canvas.getContext('2d');
+  if (width && height) {
+    canvas.width = width;
+    canvas.height = height;
+    context.drawImage(video, 0, 0, width, height);
 
     var data = canvas.toDataURL('image/png');
-
-//    socket.send({"data":"vova"});
-
-//  var context = canvas.getContext('2d');
-//  if (width && height) {
-//    canvas.width = width;
-//    canvas.height = height;
-//    context.drawImage(video, 0, 0, width, height);
-
-
-//    socket.send({"data":data});
-//  }
+    console.log("Video send")
+    socket.emit('send video', {"data":data});
+  }
 }
 
+function drawPoints(xs, ys, confs) {
+    var xs = getNumberListFromString(xs)
+    var ys = getNumberListFromString(ys)
+    var confs = getNumberListFromString(confs)
+
+    var context = canvas.getContext('2d');
+    var ctx = canvas.getContext('2d');
+
+   for (var i = 0; i<=xs.length; i++) {
+    x = xs[i]
+    y = ys[i]
+    c = confs[i]
+
+
+    ctx.beginPath();
+    ctx.arc(y, x, 20, 0, 2 * Math.PI, false);
+    ctx.stroke();
+
+//    ctx.clearRect(45,45,60,60);
+//    ctx.strokeRect(50,50,50,50);
+//
+//    console.log(xs)
+//    console.log(ys)
+//    console.log(confs)
+   }
+
+}
+
+function getNumberListFromString(numpystr) {
+   array = numpystr.match(/\d+(?:\.\d+)?/g).map(Number)
+
+   return array
+
+}
 
 window.addEventListener('load', startup, false);
-
 
 //
 //function takepicture() {
