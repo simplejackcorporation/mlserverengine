@@ -1,3 +1,4 @@
+import root
 from flask import Flask, render_template, copy_current_request_context
 from flask_socketio import SocketIO, emit
 from flask_cors import CORS, cross_origin
