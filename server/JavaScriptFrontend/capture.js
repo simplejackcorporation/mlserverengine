@@ -9,7 +9,7 @@ var photo = null;
 var startbutton = null;
 var socket = null;
 var use_confidence = true
-var confidence_threshold = 0.3
+var confidence_threshold = 0.4
 
 var skeleton = [[15, 13], [13, 11], [16, 14], [14, 12], [11, 12], [5, 11], [6, 12], [5, 6], [5, 7],
                 [6, 8], [7, 9], [8, 10], [1, 2], [0, 1], [0, 2], [1, 3], [2, 4], [3, 5], [4, 6], [0, 5], [0, 6]]
@@ -154,7 +154,7 @@ function drawPoints(xs, ys, confs) {
     var sp_y = ys[second_point_index]
     var sp_c = confs[second_point_index]
 
-    if (!use_confidence || (fp_c > confidence_threshold && sp_c > 0.5)) {
+    if (!use_confidence || (fp_c > confidence_threshold && sp_c > confidence_threshold)) {
         ctx.beginPath();
 	    ctx.moveTo(fp_y, fp_x);
 	    ctx.lineTo(sp_y, sp_x, 6);
