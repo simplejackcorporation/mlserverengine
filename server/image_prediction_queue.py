@@ -9,6 +9,8 @@ import numpy as np
 import json
 
 # root_folder_path = os.path.split(os.getcwd())[0] # cd .. to root
+from config import DEVICE
+
 print("root folder path", os.getcwd())
 
 sys.path.append(os.path.join(os.getcwd(), 'hrnet'))
@@ -23,7 +25,7 @@ from hrnet.SimpleHRNet import SimpleHRNet
 
 class ImagePredictionQueue(object):
     def __init__(self):
-        self.model = SimpleHRNet(48, 17, device=torch.device("cuda"))
+        self.model = SimpleHRNet(48, 17, device=torch.device(DEVICE))
 
         self.image_queue = []
         self.is_thread_started = False
