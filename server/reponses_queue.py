@@ -20,15 +20,17 @@ class ResponsesQueue(object):
         self.socketio = socketio
 
         send_pred_thread = threading.Thread(target=self.startSendPredictions)
+        print("\n\n\n\n")
+        print("current thread ident", threading.currentThread().ident)
+
         send_pred_thread.daemon = True
         send_pred_thread.start()
 
     def startSendPredictions(self):
         while True:
-            print("while start send preds")
+            print("while start send preds thread ident", threading.currentThread().ident)
             if len(self.image_queue.predictions) > 0:
                 print("VOVA")
-
                 prediction = self.image_queue.predictions.pop(0)
                 ys = prediction[:, :, 0][0]
                 xs = prediction[:, :, 1][0]
