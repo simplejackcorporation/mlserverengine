@@ -22,10 +22,9 @@ from hrnet.SimpleHRNet import SimpleHRNet
 
 
 class ImagePredictionQueue(object):
-    def __init__(self, socketio):
+    def __init__(self):
         self.model = SimpleHRNet(48, 17, device=torch.device("cuda"))
 
-        self.socketio = socketio
         self.image_queue = []
         self.is_thread_started = False
         self.startThread()
@@ -61,7 +60,7 @@ class ImagePredictionQueue(object):
         image = cv2.imdecode(image, flags=1)
 
         prediction = self.model.predict(image)
-
+        print("prediction finished")
         self.predictions.append(prediction)
         # ys = prediction[:, :, 0][0]
         # xs = prediction[:, :, 1][0]

@@ -22,6 +22,7 @@ sys.path.append(os.getcwd())
 # print(os.getcwd())
 from hrnet.SimpleHRNet import SimpleHRNet
 from server.image_prediction_queue import ImagePredictionQueue
+from server.reponses_queue import ResponsesQueue
 
 import torch
 import time
@@ -43,48 +44,10 @@ model = SimpleHRNet(48, 17, device=torch.device("cuda"))
 #     socketio.emit('model did predict', {"prediction" : dumped})
 
 
+image_queue = ImagePredictionQueue()
+response_queue = ResponsesQueue(image_queue, socketio)
 
-image_queue = ImagePredictionQueue(socketio)
 send_pred_thread = None
-
-class NumpyEncoder(json.JSONEncoder):
-    """ Special json encoder for numpy types """
-    def default(self, obj):
-        if isinstance(obj, np.integer):
-            return int(obj)
-        elif isinstance(obj, np.floating):
-            return float(obj)
-        elif isinstance(obj, np.ndarray):
-            return obj.tolist()
-        return json.JSONEncoder.default(self, obj)
-
-
-def startSendPredictionsThread():
-    global send_pred_thread
-    if send_pred_thread is None:
-        send_pred_thread = threading.Thread(target=startSendPredictions)
-        send_pred_thread.daemon = True
-        send_pred_thread.start()
-
-
-
-def startSendPredictions():
-    while True:
-        print("VOVA")
-        if len(image_queue.predictions) > 0:
-            prediction = image_queue.predictions.pop(0)
-            ys = prediction[:, :, 0][0]
-            xs = prediction[:, :, 1][0]
-            confs = prediction[:, :, 2][0]
-
-            dumped_xs = json.dumps(ys, cls=NumpyEncoder)
-            dumped_ys = json.dumps(xs, cls=NumpyEncoder)
-            dumped_confs = json.dumps(confs, cls=NumpyEncoder)
-
-            socketio.emit('model did predict', {"dumped_xs": dumped_xs,
-                                                     "dumped_ys": dumped_ys,
-                                                     "dumped_confs": dumped_confs})
-        time.sleep(1)
 
 
 @app.route('/')
@@ -96,7 +59,6 @@ def index():
 def test_connect():
     print("test_connect")
     emit('after connect',  {'data':'Lets dance'})
-    startSendPredictionsThread()
 
 
 @socketio.on('send video')
