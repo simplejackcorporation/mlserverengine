@@ -3,8 +3,17 @@ from flask_socketio import SocketIO, emit
 from flask_cors import CORS, cross_origin
 import threading
 from engineio.payload import Payload
-Payload.max_decode_packets = 50
 
+import os
+import sys
+
+SERVER_FOLDER = os.getcwd() + "/server"
+if SERVER_FOLDER not in sys.path:
+    sys.path.append(SERVER_FOLDER)
+
+from config import DEVICE
+
+Payload.max_decode_packets = 50
 
 import numpy as np
 
@@ -34,10 +43,9 @@ app.config['DEBUG'] = True
 cors = CORS(app)
 
 # https://github.com/miguelgrinberg/python-engineio/issues/142
-socketio = SocketIO(app, cors_allowed_origins="*", async_mode='gevent',  ping_timeout=1000, ping_interval=1000)
+socketio = SocketIO(app, cors_allowed_origins="*", async_mode='gevent', ping_timeout=1000, ping_interval=1000)
 
-model = SimpleHRNet(48, 17, device=torch.device("cuda"))
-
+model = SimpleHRNet(48, 17, device=torch.device(DEVICE))
 
 # def queuecallback(prediction):
 #     dumped = json.dumps(prediction, cls=NumpyEncoder)
@@ -55,10 +63,11 @@ def index():
     print("index dummy flask")
     return render_template('home.html')
 
+
 @socketio.on('connect')
 def test_connect():
     print("test_connect")
-    emit('after connect',  {'data':'Lets dance'})
+    emit('after connect', {'data': 'Lets dance'})
 
 
 @socketio.on('send video')
@@ -68,7 +77,6 @@ def send_video(socket):
 
     emit('video received')
 
-
     # @copy_current_request_context
     # def temp():
     #     image_queue.appendImage(socket)
@@ -76,6 +84,7 @@ def send_video(socket):
     # print(img_string)
 
     # emit("Video received")
+
 
 if __name__ == '__main__':
     print("vova")
