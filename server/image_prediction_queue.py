@@ -12,36 +12,30 @@ import json
 print("root folder path", os.getcwd())
 
 sys.path.append(os.path.join(os.getcwd(), 'hrnet'))
+sys.path.append(os.path.join(os.getcwd(), 'facedetection'))
 
 sys.path.append(os.getcwd())
 # print(os.getcwd())
 from hrnet.SimpleHRNet import SimpleHRNet
 
 
-class NumpyEncoder(json.JSONEncoder):
-    """ Special json encoder for numpy types """
-    def default(self, obj):
-        if isinstance(obj, np.integer):
-            return int(obj)
-        elif isinstance(obj, np.floating):
-            return float(obj)
-        elif isinstance(obj, np.ndarray):
-            return obj.tolist()
-        return json.JSONEncoder.default(self, obj)
+
 
 class ImagePredictionQueue(object):
     def __init__(self, socketio):
         self.model = SimpleHRNet(48, 17, device=torch.device("cuda"))
+
         self.socketio = socketio
         self.image_queue = []
         self.is_thread_started = False
         self.startThread()
+        self.predictions = []
 
 
     def startThread(self):
         if self.is_thread_started is True:
             return
-        thread = threading.Thread(target=self.start, args=())
+        thread = threading.Thread(target=self.start)
         thread.daemon = True
         thread.start()
         self.is_thread_started = True
@@ -57,6 +51,8 @@ class ImagePredictionQueue(object):
         if len(self.image_queue) == 0:
             return
 
+        print(len(self.image_queue))
+
         print("img process")
         socket = self.image_queue.pop(0)
         img_string = socket["data"].split(',')[1]
@@ -66,17 +62,18 @@ class ImagePredictionQueue(object):
 
         prediction = self.model.predict(image)
 
-        ys = prediction[:, :, 0][0]
-        xs = prediction[:, :, 1][0]
-        confs = prediction[:, :, 2][0]
-
-        dumped_xs = json.dumps(ys, cls=NumpyEncoder)
-        dumped_ys = json.dumps(xs, cls=NumpyEncoder)
-        dumped_confs = json.dumps(confs, cls=NumpyEncoder)
-
-        self.socketio.emit('model did predict', {"dumped_xs" : dumped_xs,
-                                                 "dumped_ys" : dumped_ys,
-                                                 "dumped_confs" : dumped_confs}, )
+        self.predictions.append(prediction)
+        # ys = prediction[:, :, 0][0]
+        # xs = prediction[:, :, 1][0]
+        # confs = prediction[:, :, 2][0]
+        #
+        # dumped_xs = json.dumps(ys, cls=NumpyEncoder)
+        # dumped_ys = json.dumps(xs, cls=NumpyEncoder)
+        # dumped_confs = json.dumps(confs, cls=NumpyEncoder)
+        #
+        # self.socketio.emit('model did predict', {"dumped_xs" : dumped_xs,
+        #                                          "dumped_ys" : dumped_ys,
+        #                                          "dumped_confs" : dumped_confs})
 
 
         sleep(0.01)

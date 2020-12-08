@@ -9,6 +9,9 @@ var photo = null;
 var startbutton = null;
 var socket = null;
 
+var skeleton = [[15, 13], [13, 11], [16, 14], [14, 12], [11, 12], [5, 11], [6, 12], [5, 6], [5, 7],
+                [6, 8], [7, 9], [8, 10], [1, 2], [0, 1], [0, 2], [1, 3], [2, 4], [3, 5], [4, 6], [0, 5], [0, 6]]
+
 
 function startup() {
 //  import { hello } from './module.js';
@@ -32,12 +35,13 @@ function startup() {
 
   socket.on('after connect', function (socket) {
     console.log("VOVA HERE")
-    loopFunction(1000, sendPicture); // call every 1 sec
+    loopFunction(100, sendPicture); // call every 1 sec
 
   })
 
    socket.on('model did predict', function (socket) {
     console.log("prediction received")
+    console.log(socket)
 
     dumped_xs = socket["dumped_xs"]
     dumped_ys = socket["dumped_ys"]
@@ -106,6 +110,8 @@ function sendPicture() {
 }
 
 function drawPoints(xs, ys, confs) {
+
+    // format is (Y, X) (Why ?)
     var xs = getNumberListFromString(xs)
     var ys = getNumberListFromString(ys)
     var confs = getNumberListFromString(confs)
@@ -118,17 +124,32 @@ function drawPoints(xs, ys, confs) {
     y = ys[i]
     c = confs[i]
 
-
     ctx.beginPath();
+
     ctx.arc(y, x, 20, 0, 2 * Math.PI, false);
     ctx.stroke();
+   }
 
-//    ctx.clearRect(45,45,60,60);
-//    ctx.strokeRect(50,50,50,50);
+   for (var i = 0; i < skeleton.length - 1; i++) {
+    var item = skeleton[i]
+    console.log(skeleton[i])
+    console.log('\n\n')
+
+    var first_point_index = item[0]
+    var second_point_index = item[1]
+
+    var fp_x = xs[first_point_index]
+    var fp_y = ys[first_point_index]
+
+    var sp_x = xs[second_point_index]
+    var sp_y = ys[second_point_index]
 //
-//    console.log(xs)
-//    console.log(ys)
-//    console.log(confs)
+    ctx.beginPath();
+	ctx.moveTo(fp_y, fp_x);
+	ctx.lineTo(sp_y, sp_x, 6);
+
+	ctx.strokeStyle = '#000000';
+	ctx.stroke()
    }
 
 }
