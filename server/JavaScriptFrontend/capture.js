@@ -8,10 +8,15 @@ var canvas = null;
 var photo = null;
 var startbutton = null;
 var socket = null;
+var use_confidence = true
+var confidence_threshold = 0.4
 
 var skeleton = [[15, 13], [13, 11], [16, 14], [14, 12], [11, 12], [5, 11], [6, 12], [5, 6], [5, 7],
                 [6, 8], [7, 9], [8, 10], [1, 2], [0, 1], [0, 2], [1, 3], [2, 4], [3, 5], [4, 6], [0, 5], [0, 6]]
 
+var dumped_xs
+var dumped_ys
+var dumped_confs
 
 function startup() {
 //  import { hello } from './module.js';
@@ -35,8 +40,7 @@ function startup() {
 
   socket.on('after connect', function (socket) {
     console.log("VOVA HERE")
-    loopFunction(100, sendPicture); // call every 1 sec
-
+    loopFunction(150, sendPicture); // call every 1 sec
   })
 
    socket.on('model did predict', function (socket) {
@@ -46,7 +50,6 @@ function startup() {
     dumped_xs = socket["dumped_xs"]
     dumped_ys = socket["dumped_ys"]
     dumped_confs = socket["dumped_confs"]
-    drawPoints(dumped_xs, dumped_ys, dumped_confs)
   })
 
   socket.on('Video received', function (socket) {
@@ -106,6 +109,9 @@ function sendPicture() {
     var data = canvas.toDataURL('image/png');
     console.log("Video send")
     socket.emit('send video', {"data":data});
+    if (dumped_xs) {
+        drawPoints(dumped_xs, dumped_ys, dumped_confs)
+    }
   }
 }
 
@@ -124,10 +130,12 @@ function drawPoints(xs, ys, confs) {
     y = ys[i]
     c = confs[i]
 
-    ctx.beginPath();
-
-    ctx.arc(y, x, 20, 0, 2 * Math.PI, false);
-    ctx.stroke();
+    if (!use_confidence || c > confidence_threshold) {
+        ctx.beginPath();
+        ctx.arc(y, x, 10, 0, 2 * Math.PI, false);
+        ctx.strokeStyle = '#ffff00';
+        ctx.stroke();
+    }
    }
 
    for (var i = 0; i < skeleton.length - 1; i++) {
@@ -140,16 +148,20 @@ function drawPoints(xs, ys, confs) {
 
     var fp_x = xs[first_point_index]
     var fp_y = ys[first_point_index]
+    var fp_c = confs[first_point_index]
 
     var sp_x = xs[second_point_index]
     var sp_y = ys[second_point_index]
-//
-    ctx.beginPath();
-	ctx.moveTo(fp_y, fp_x);
-	ctx.lineTo(sp_y, sp_x, 6);
+    var sp_c = confs[second_point_index]
 
-	ctx.strokeStyle = '#000000';
-	ctx.stroke()
+    if (!use_confidence || (fp_c > confidence_threshold && sp_c > confidence_threshold)) {
+        ctx.beginPath();
+	    ctx.moveTo(fp_y, fp_x);
+	    ctx.lineTo(sp_y, sp_x, 6);
+
+	    ctx.strokeStyle = '#00ff00';
+	    ctx.stroke()
+    }
    }
 
 }
