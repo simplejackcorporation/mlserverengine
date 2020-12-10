@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta content="ugh, hi." name="description">
+    <meta content="Live Poses" name="title">
+    <title>Pose Estimation</title>
+    <style>
+         #container {
+             margin: 0px auto;
+             border: 10px #333 solid;
+         }
+         #video {
+             width: 640px;
+             height: 480px;
+             background-color: #666;
+         }
+
+         #canvas {
+             width: 640px;
+             height: 480px;
+         }
+
+
+    </style>
+</head>
+<body>
+<div id="container">
+    <video autoplay="true" id="video" width="100", height="100">
+    </video>
+    <canvas id="canvas" width="100" height="100"></canvas>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+        integrity="sha256-k2WSCIexGzOj3Euiig+TlR8gA0EmPjuc79OEeY5L45g=" crossorigin="anonymous"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js"></script>
+<script src="{{ url_for('static', filename='js/capture.js') }}"></script>
+</body>
+</html>

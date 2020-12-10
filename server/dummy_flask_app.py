@@ -47,7 +47,7 @@ send_pred_thread = None
 @app.route('/')
 def index():
     print("index dummy flask")
-    return render_template('home.html')
+    return render_template('index.html')
 
 
 @socketio.on('connect')
