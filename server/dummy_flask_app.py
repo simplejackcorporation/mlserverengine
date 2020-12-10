@@ -74,4 +74,4 @@ def send_video(socket):
 
 if __name__ == '__main__':
     print("dummy flask app has started")
-    socketio.run(app, port=8009)
+    socketio.run(app, host='0.0.0.0', port=8009)
