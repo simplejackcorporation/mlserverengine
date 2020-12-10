@@ -22,7 +22,7 @@ function startup() {
 //  import { hello } from './module.js';
 
 //  socket = io.connect('http://localhost:8009')
-  var url = 'http://localhost:8009'
+  var url = 'http://34.68.98.161'
   socket = io(url, {
   transportOptions: {
     polling: {
