@@ -25,7 +25,7 @@ from hrnet.SimpleHRNet import SimpleHRNet
 
 class ImagePredictionQueue(object):
     def __init__(self):
-        self.model = SimpleHRNet(48, 17, device=torch.device(DEVICE))
+        self.model = SimpleHRNet(32, 17, checkpoint_path='hrnet/weights/pose_hrnet_w32_256x192.pth', device=torch.device(DEVICE))
 
         self.image_queue = []
         self.is_thread_started = False
