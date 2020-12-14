@@ -7,9 +7,19 @@ sys.path.append(os.path.join(os.getcwd(), 'hrnet', 'models'))
 
 print(sys.path)
 
-from hrnet.SimpleHRNet import SimpleHRNet
+print(os.getcwd())
+if not os.getcwd().endswith("hrnet"):
+    os.chdir(os.getcwd() + "/hrnet")
+    if os.getcwd() not in sys.path:
+        sys.path.append(os.getcwd())
+    print(os.getcwd())
+    print(sys.path)
+from models.hrnet import HRNet
+model = HRNet(c=48, nof_joints=17)
+if os.getcwd().endswith("hrnet"):
+    os.chdir("".join(os.getcwd()[:-len("/hrnet")]))
+print(os.getcwd())
 
-from hrnet.models.hrnet import HRNet
 
 import onnx
 import onnxruntime
