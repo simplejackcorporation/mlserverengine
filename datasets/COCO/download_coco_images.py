@@ -7,24 +7,35 @@ sys.path.insert(1, r"C:\Users\m\Downloads")
 
 import json
 import cv2
-from PIL import Image
-import requests
-from io import BytesIO
 import numpy as np
 from urllib.request import urlopen
 
-from misc.visualization import showAnns
+from hrnet.misc.visualization import showAnns
+
+import time
 
 def read_json(path, save_path):
     counter = 0
-    with open(path) as json_file:
+    base_path = r'C:\Users\m\Desktop\Pose Estimation\mlserverengine'
+    total_path = os.path.join(base_path, path)
+
+    total_exec_time = 0
+    total_memory = 0 #
+    with open(total_path) as json_file:
         data = json.load(json_file)
         annotations = data["annotations"]
         images = data["images"]
+        test_count = 5000
+        images = images[0: test_count]
+        print("images len", len(images))
+        print("annotations len", len(annotations))
 
         for index, img in enumerate(images):
+            print(index)
+            start_iter_time = time.time()
+
             keypoints_arr = []
-            for ann in annotations:
+            for index, ann in enumerate(annotations):
                 if "image_id" not in ann:
                     continue
 
@@ -39,9 +50,11 @@ def read_json(path, save_path):
 
             if len(keypoints_arr) == 0:
                 continue
+
             counter += 1
 
             coco_url = img["coco_url"]
+            img_downl_start_time = time.time()
             req = urlopen(coco_url)
             # # print(ann)
             arr = np.asarray(bytearray(req.read()), dtype=np.uint8)
@@ -52,15 +65,39 @@ def read_json(path, save_path):
             # # break
             # # print(image.shape)
             #
-            img = showAnns(image, keypoints_arr)
-            cv2.imshow("vova", img)
-            cv2.waitKey()
+
+            print("img time for downl", time.time() - img_downl_start_time)
+
+            img_total_size = 0
+            print('len(image.shape)', len(image.shape))
+
+            if len(image.shape) == 3:
+                img_total_size = image.shape[0] * image.shape[1] * image.shape[2]
+            else :
+                img_total_size = image.shape[0] * image.shape[1]
+
+            img_mem = float(img_total_size) / 1024000
+
+            print("img_mem mg", img_mem)
+
+            # img = showAnns(image, keypoints_arr)
+            execution_time = time.time() - start_iter_time
+            total_exec_time += execution_time
+            total_memory += img_mem
+            print("execution_time ", execution_time)
+            # cv2.imshow("vova", img)
+            # cv2.waitKey()
             # break
 
         print(counter)
+        print("\n \n Total_exec_time: ", total_exec_time)
+        print("\n \n Total_memory: ", total_memory)
+
+        print("\n \n mean total_exec_time: ", total_exec_time / test_count)
+        print("\n \n meain total_memory: ", total_memory/ test_count)
 
 
 if __name__ == '__main__':
-    path = "datasets/person_keypoints_train2017.json"
+    path = "datasets\person_keypoints_train2017.json"
     save_path = r"C:\Users\m\Desktop\Pose Estimation\Dataset"
     read_json(path, save_path)

@@ -172,9 +172,9 @@ def draw_skeleton(image, points, skeleton, color_palette='Set2', palette_samples
             np.array(plt.get_cmap(color_palette)(np.linspace(0, 1, palette_samples))) * 255
         ).astype(np.uint8)[:, -2::-1].tolist()
 
-    print("POINTS", points)
+    # print("POINTS", points)
 
-    print(np.array(points).shape)
+    # print(np.array(points).shape)
     for i, joint in enumerate(skeleton):
         pt1, pt2 = np.array(points)[joint]
 
