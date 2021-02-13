@@ -3,6 +3,7 @@ from flask_socketio import SocketIO, emit
 from flask_cors import CORS, cross_origin
 import time
 from engineio.payload import Payload
+from flask_ngrok import run_with_ngrok
 
 Payload.max_decode_packets = 50
 
@@ -36,7 +37,8 @@ app.config['DEBUG'] = True
 cors = CORS(app)
 
 # https://github.com/miguelgrinberg/python-engineio/issues/142
-socketio = SocketIO(app, cors_allowed_origins="*", async_mode='gevent', ping_timeout=1000, ping_interval=1000)
+#  async_mode='gevent'
+socketio = SocketIO(app, cors_allowed_origins="*", ping_timeout=1000, ping_interval=1000)
 
 image_queue = ImagePredictionQueue()
 response_queue = ResponsesQueue(image_queue, socketio)
