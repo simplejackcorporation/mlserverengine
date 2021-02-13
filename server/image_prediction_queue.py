@@ -33,8 +33,7 @@ class NumpyEncoder(json.JSONEncoder):
         return json.JSONEncoder.default(self, obj)
 
 class ImagePredictionQueue(object):
-    def __init__(self):
-        checkpoint_path = 'hrnet/weights/pose_hrnet_w32_256x192.pth'
+    def __init__(self, checkpoint_path):
         self.model = SimpleHRNet(32,
                                  17,
                                  checkpoint_path=checkpoint_path,

@@ -5,6 +5,8 @@ import time
 from engineio.payload import Payload
 from flask_ngrok import run_with_ngrok
 
+import argparse
+
 Payload.max_decode_packets = 50
 
 import numpy as np
@@ -40,11 +42,6 @@ cors = CORS(app)
 #  async_mode='gevent'
 socketio = SocketIO(app, cors_allowed_origins="*", ping_timeout=1000, ping_interval=1000)
 
-image_queue = ImagePredictionQueue()
-response_queue = ResponsesQueue(image_queue, socketio)
-
-send_pred_thread = None
-
 
 @app.route('/')
 def index():
@@ -75,5 +72,14 @@ def send_video(socket):
 
 
 if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('checkpoint_path', default="hrnet/weights/pose_hrnet_w32_256x192.pth")
+    args = parser.parse_args()
+
+    image_queue = ImagePredictionQueue(args.checkpoint_path)
+    response_queue = ResponsesQueue(image_queue, socketio)
+
+    send_pred_thread = None
+
     print("dummy flask app has started")
     socketio.run(app, host='0.0.0.0', port=8009)
