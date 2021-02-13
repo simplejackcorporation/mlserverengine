@@ -38,7 +38,7 @@ class ImagePredictionQueue(object):
         self.model = SimpleHRNet(32,
                                  17,
                                  checkpoint_path=checkpoint_path,
-                                 device=torch.device('cuda'))
+                                 device=torch.device("cuda"))
 
         self.image_queue = []
         self.is_thread_started = False
