@@ -9,7 +9,6 @@ import numpy as np
 import json
 
 # root_folder_path = os.path.split(os.getcwd())[0] # cd .. to root
-from config import DEVICE
 
 print("root folder path", os.getcwd())
 
@@ -22,10 +21,23 @@ from hrnet.SimpleHRNet import SimpleHRNet
 
 
 
+class NumpyEncoder(json.JSONEncoder):
+    """ Special json encoder for numpy types """
+    def default(self, obj):
+        if isinstance(obj, np.integer):
+            return int(obj)
+        elif isinstance(obj, np.floating):
+            return float(obj)
+        elif isinstance(obj, np.ndarray):
+            return obj.tolist()
+        return json.JSONEncoder.default(self, obj)
 
 class ImagePredictionQueue(object):
     def __init__(self):
-        self.model = SimpleHRNet(32, 17, checkpoint_path='hrnet/weights/pose_hrnet_w32_256x192.pth', device=torch.device(DEVICE))
+        self.model = SimpleHRNet(32,
+                                 17,
+                                 checkpoint_path='hrnet/weights/pose_hrnet_w32_256x192.pth',
+                                 device=torch.device('cuda'))
 
         self.image_queue = []
         self.is_thread_started = False
@@ -80,6 +92,7 @@ class ImagePredictionQueue(object):
         sleep(0.01)
 
     def start(self):
+        print("start ")
         while True:
             self.processImage()
             sleep(0.01)

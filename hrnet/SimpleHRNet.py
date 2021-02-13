@@ -2,7 +2,10 @@ import cv2
 import numpy as np
 import torch
 from torchvision.transforms import transforms
-from models.hrnet import HRNet
+from hrnet.models.hrnet import HRNet
+import os
+
+os.chdir(r"C:\Users\m\Desktop\Pose Estimation\mlserverengine")
 
 class SimpleHRNet:
     """
@@ -18,7 +21,7 @@ class SimpleHRNet:
     def __init__(self,
                  c,
                  nof_joints,
-                 checkpoint_path=r".\hrnet\weights\pose_hrnet_w48_384x288.pth",
+                 checkpoint_path=r".\hrnet\weights\pose_hrnet_w32_256x192.pth",
                  model_name='HRNet',
                  resolution=(384, 288),
                  interpolation=cv2.INTER_CUBIC,
@@ -67,6 +70,9 @@ class SimpleHRNet:
         self.c = c
         self.nof_joints = nof_joints
         self.checkpoint_path = checkpoint_path
+
+        print("VOVA", os.path.exists(checkpoint_path))
+        print(os.getcwd())
         self.model_name = model_name
         self.resolution = resolution  # in the form (height, width) as in the original implementation
         self.interpolation = interpolation

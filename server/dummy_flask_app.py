@@ -1,7 +1,7 @@
 from flask import Flask, render_template, copy_current_request_context
 from flask_socketio import SocketIO, emit
 from flask_cors import CORS, cross_origin
-import threading
+import time
 from engineio.payload import Payload
 
 Payload.max_decode_packets = 50
@@ -58,7 +58,7 @@ def test_connect():
 
 @socketio.on('send video')
 def send_video(socket):
-    print("send video")
+    print("VIDEO RECEIVED", time.time())
     image_queue.appendImage(socket)
 
     emit('video received')

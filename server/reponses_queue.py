@@ -28,7 +28,9 @@ class ResponsesQueue(object):
 
     def startSendPredictions(self):
         while True:
-            print("while start send preds thread ident", threading.currentThread().ident)
+            # print("while start send preds thread ident", threading.currentThread().ident)
+            # print("preds len" , len(self.image_queue.predictions))
+
             if len(self.image_queue.predictions) > 0:
                 print("VOVA")
                 prediction = self.image_queue.predictions.pop(0)
