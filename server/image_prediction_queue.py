@@ -34,9 +34,10 @@ class NumpyEncoder(json.JSONEncoder):
 
 class ImagePredictionQueue(object):
     def __init__(self):
+        checkpoint_path = 'hrnet/weights/pose_hrnet_w32_256x192.pth'
         self.model = SimpleHRNet(32,
                                  17,
-                                 checkpoint_path='hrnet/weights/pose_hrnet_w32_256x192.pth',
+                                 checkpoint_path=checkpoint_path,
                                  device=torch.device('cuda'))
 
         self.image_queue = []

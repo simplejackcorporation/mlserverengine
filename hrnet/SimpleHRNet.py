@@ -5,7 +5,12 @@ from torchvision.transforms import transforms
 from hrnet.models.hrnet import HRNet
 import os
 
-os.chdir(r"C:\Users\m\Desktop\Pose Estimation\mlserverengine")
+print("\n\n Simple hrnet", os.getcwd())
+# os.chdir(r"C:\Users\m\Desktop\Pose Estimation\mlserverengine")
+# os.chdir("..")
+
+
+print("\n\n AFTER  Simple hrnet", os.getcwd())
 
 class SimpleHRNet:
     """
@@ -21,7 +26,7 @@ class SimpleHRNet:
     def __init__(self,
                  c,
                  nof_joints,
-                 checkpoint_path=r".\hrnet\weights\pose_hrnet_w32_256x192.pth",
+                 checkpoint_path,
                  model_name='HRNet',
                  resolution=(384, 288),
                  interpolation=cv2.INTER_CUBIC,
